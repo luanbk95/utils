@@ -21,7 +21,6 @@ fi
 # Run as root
 echo "$password" | sudo -S apt-get update
 
-sudo su $username
 mkdir -p /home/${username}/Downloads/
 cd /home/${username}/Downloads/
 
@@ -69,7 +68,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 # Rootless docker
 grep -q -E "^docker:" /etc/group || sudo groupadd docker
 sudo usermod -aG docker $username
-newgrp docker
+#newgrp docker
 
 ## Kubernetes
 echo \
@@ -101,31 +100,4 @@ sudo apt-mark hold docker-ce kubelet kubeadm kubectl
 # sudo snap install --classic code -y
 
 mkdir -p /home/${username}/workspace
-
-######## Install zsh and plugins
-
-# https://onet.com.vn/how-to-install-zsh-shell-on-ubuntu-18-04-lts/
-# sudo apt install zsh -y
-
-# chsh -s $(which zsh)
-# Install Oh My Zsh
-# sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
-
-
-#     1  ls -la ~/
-#     2  cat ~/.zsh_history
-#     3  cat /home/backup/ptluan/.zsh_history
-#     4  cp /.zsh_history /tmp
-#     5  cp /.zshrc /tmp
-#     6  cp /home/backup/ptluan/.zshrc ~/
-#     7  cat ~/.zshrc
-#     8  cp /home/backup/ptluan/.zsh_history ~/
-#     9  vi ~/.zshrc
-#    10  ls -la ~/.zsh/zsh-autosuggestions
-#    11  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-#    12  ls -la ~/.zsh/zsh-autosuggestions
-#    13  mv ls -la /usr/share/powerlevel9k
-#    14  ls -la ~/
-#    15  cp -r /home/backup/ptluan/.zsh/ ~/
-#    16  vi ~/.zshrc
 
