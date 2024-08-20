@@ -5,8 +5,8 @@ read -p "Enter system admin username: " username
 echo -n "Password: "
 read -s password
 echo
-read -p "Enter git user: " git_user
-read -p "Enter git email: " git_email
+read -p "Enter git user (Luan Phan): " git_user
+read -p "Enter git email (ptluan@tma.com.vn): " git_email
 
 git_user=${git_user:-Luan Phan}
 git_email=${git_email:-ptluan@tma.com.vn}
@@ -21,7 +21,8 @@ fi
 # Run as root
 echo "$password" | sudo -S apt-get update
 
-mkdir -p /home/${username}/Downloads/
+mkdir -p /home/${username}/Downloads
+mkdir -p /home/${username}/workspace
 cd /home/${username}/Downloads/
 
 ## Essential tools
@@ -32,21 +33,37 @@ git config --global user.email "$git_email"
 ## Zsh
 # https://onet.com.vn/how-to-install-zsh-shell-on-ubuntu-18-04-lts/
 sudo apt install zsh powerline fonts-powerline zsh-theme-powerlevel9k zsh-syntax-highlighting -yy
-[ -e ~/.oh-my-zsh ] && rm -rf ~/.oh-my-zsh
+[ -e /home/${username}/.oh-my-zsh ] && rm -rf /home/${username}/.oh-my-zsh
 export RUNZSH="no"; sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
-git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-autosuggestions /home/${username}/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 
 # auto suggestion
-grep "source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ~/.zshrc \
-  || echo "source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" >> ~/.zshrc
+grep "source /home/${username}/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" /home/${username}/.zshrc \
+  || echo "source /home/${username}/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" >> /home/${username}/.zshrc
 
 # syntax highlight
-grep "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ~/.zshrc \
-  || echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc
+grep "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" /home/${username}/.zshrc \
+  || echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> /home/${username}/.zshrc
 
-# powerlevel9k
-grep "source /usr/share/powerlevel9k/powerlevel9k.zsh-theme" ~/.zshrc \
-  || echo "source /usr/share/powerlevel9k/powerlevel9k.zsh-theme" >> ~/.zshrc
+# # powerlevel9k
+# grep "source /usr/share/powerlevel9k/powerlevel9k.zsh-theme" ~/.zshrc \
+#   || echo "source /usr/share/powerlevel9k/powerlevel9k.zsh-theme" >> ~/.zshrc
+
+# powerlevel10k
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+git clone --depth=1 https://github.com/luanbk95/utils.git /home/${username}/workspace/tmp
+cp /home/${username}/workspace/tmp/.p10k.zsh ~/.p10k.zsh
+
+grep "ZSH_THEME=powerlevel10k/powerlevel10k" /home/${username}/.zshrc \
+  || tee -a /home/${username}/.zshrc << power10k
+ZSH_THEME=powerlevel10k/powerlevel10k
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(history)
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+
+export LS_COLORS="rs=0:no=00:mi=00:mh=00:ln=01;36:or=01;31:di=01;34:ow=04;01;34:st=34:tw=04;34:pi=01;33:so=01;33:do=01;33:bd=01;33:cd=01;33:su=01;35:sg=01;35:ca=01;35:ex=01;32:"
+source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+power10k
 
 # set zsh default
 #sudo usermod -s /usr/bin/zsh $username
@@ -99,5 +116,18 @@ sudo apt-mark hold docker-ce kubelet kubeadm kubectl
 # ## VScode
 # sudo snap install --classic code -y
 
-mkdir -p /home/${username}/workspace
+# # Setup alias, terminal time
+tee -a /home/${username}/.zshrc <<EOF
+HIST_STAMPS="mm/dd/yyyy"
+
+alias lsa='ls -la'
+alias d='docker'
+alias kg='kubectl get'
+alias kd='kubectl describe'
+alias k='kubectl'
+alias t='terraform'
+alias python='python3'
+alias pip='pip3'
+
+EOF
 
