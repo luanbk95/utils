@@ -1,5 +1,14 @@
 #!/bin/bash
 
+COLOR_ERROR="\033[1;31m"
+COLOR_PASS="\033[1;32m"
+COLOR_RESET="\033[0m"
+
+# message $COLOR $MSG
+message() {
+    echo -e "${1}${2}${COLOR_RESET}"
+}
+
 read -p "Enter system admin username: " username
 # Read Password
 echo -n "Password: "
@@ -130,4 +139,10 @@ alias python='python3'
 alias pip='pip3'
 
 EOF
+
+# Flameshot
+sudo apt install flameshot
+message $COLOR_PASS "FLAMESHOT USAGE:"
+echo "gsettings set org.gnome.settings-daemon.plugins.media-keys screenshot '[]'"
+echo "Ubuntu 20.04: Go to Settings > Keyboard Shortcuts and press the '+' button at the bottom."
 
