@@ -35,7 +35,7 @@ mkdir -p /home/${username}/workspace
 cd /home/${username}/Downloads/
 
 ## Essential tools
-sudo apt install wget curl net-tools vim openssh-server openssh-client git sshpass -yy
+sudo apt install wget curl net-tools vim openssh-server openssh-client git sshpass unzip awscli -yy
 git config --global user.name "$git_user"
 git config --global user.email "$git_email"
 
@@ -107,7 +107,33 @@ sudo apt-get update -y
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold docker-ce kubelet kubeadm kubectl
 
-# ## Ibus-bamboo (vietnamese)
+## Java
+sudo apt install default-jre
+java -version
+sudo apt install default-jdk
+javac -version
+
+## Terraform
+
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+wget -O- https://apt.releases.hashicorp.com/gpg | \
+gpg --dearmor | \
+sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+sudo apt update
+sudo apt-get install terraform
+
+git clone --depth=1 https://github.com/tfutils/tfenv.git /home/${username}/.tfenv
+echo 'export PATH="/home/${username}/.tfenv/bin:$PATH"' >> /home/${username}/.zshrc
+
+tfenv install 1.9.8
+tfenv use 1.9.8
+
+# ## Ibus-bamboo (Vietnamese)
 # sudo add-apt-repository ppa:bamboo-engine/ibus-bamboo
 # sudo apt-get update -y
 # sudo apt-get install ibus ibus-bamboo --install-recommends -y
